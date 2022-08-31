@@ -32,16 +32,29 @@ function App() {
 						(response: DOMMessageResponse) => {
 							setTitle(response.title);
 							setHeadlines(response.headlines);
-              setUrl(response.url)
+							setUrl(response.url);
 						}
 					);
 				}
 			);
-	});
+	}, []);
+
+	React.useEffect(() => {
+		document.getElementById("highlight")!.addEventListener("click", sendHighlightMessage, false);
+
+		function sendHighlightMessage() {
+			chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+				chrome.tabs.sendMessage(tabs[0].id || 0, { highlight: true }, function (response) {
+					console.log(response);
+				});
+			});
+		}
+	}, []);
 
 	return (
 		<div className="App">
 			<h1>SEO Extension built with React!</h1>
+			<button id="highlight">Highlight</button>
 
 			<ul className="SEOForm">
 				<li className="SEOValidation">
@@ -83,6 +96,8 @@ function App() {
 					</div>
 				</li>
 			</ul>
+
+			<p>highlight typography please!</p>
 		</div>
 	);
 }
